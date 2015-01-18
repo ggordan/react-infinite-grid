@@ -15,12 +15,8 @@ var Item = React.createClass({
 	},
 
 	_itemLeft: function() {
-		var d = this.props.dimensions;
-
-		// get the index with the itemsPerRow range. Item 50 can't be 50 * w
-		// if there are only 6 items in a row.
-		var column = this.props.index % d.itemsPerRow;
-		return column * (d.gridWidth / d.itemsPerRow);
+		var column = this.props.index % this.props.dimensions.itemsPerRow;
+		return column * (this.props.dimensions.gridWidth / this.props.dimensions.itemsPerRow);
 	},
 
 	_itemTop: function() {
@@ -37,8 +33,8 @@ var Item = React.createClass({
     	});
 
     	var style = {
-    		width: this._itemWidth() - 10,
-    		height: this.props.dimensions.height - 10,
+    		width: this._itemWidth() - this.props.padding,
+    		height: this.props.dimensions.height - this.props.padding,
     		left: this._itemLeft(),
     		top: this._itemTop(),
     		position: "absolute",

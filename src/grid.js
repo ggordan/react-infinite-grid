@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 var React = require('react');
 var Item = require('./item');
 
@@ -39,6 +37,15 @@ var Grid = React.createClass({
     },
 
     // METHODS
+
+    _style: function() {
+        return {
+            marginTop: this.props.itemPadding,
+            marginLeft: this.props.itemPadding,
+            position: "relative",
+            minHeight: this.state.minHeight,
+        };
+    },
 
     _getGridRect: function() {
         return this.refs.grid.getDOMNode().getBoundingClientRect();
@@ -145,19 +152,25 @@ var Grid = React.createClass({
                 var entry = this.props.entries[i];
                 if (i >= this.state.visibleIndexes.lower && i <= this.state.visibleIndexes.higher) {
                     if (entry) {
-                        // entries.push(Item({
-                        //     dimensions: this.state.itemDimensions,
-                        //     index: i,
-                        //     key: "item-" + i,
-                        //     children: [entry({})],
-                        // }));
+                        entries.push(Item({
+                            dimensions: this.state.itemDimensions,
+                            index: i,
+                            key: "item-" + i,
+                            padding: this.props.itemPadding,
+                            children: [entry({ key: "hello"+ i})],
+                        }));
+                        // entries.push(
+                        //     <Item dimensions={this.state.itemDimensions} index={i} key={"item" + i}>
+                        //         <entry />
+                        //     </Item>
+                        // );
                     }
                 }
             }
         }
         return(
             <div className="lazy-grid-wrapper">
-                <div ref="grid" className="lazy-grid" style={{ minHeight: this.state.minHeight, position: "relative" }}>
+                <div ref="grid" className="lazy-grid" style={this._style()}>
                     {entries}
                 </div>
             </div>
