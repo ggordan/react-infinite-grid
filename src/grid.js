@@ -51,6 +51,10 @@ var Grid = React.createClass({
         return this.refs.grid.getDOMNode().getBoundingClientRect();
     },
 
+    _getWrapperRect: function() {
+        return this.refs.wrapper.getDOMNode().getBoundingClientRect();
+    },
+
     _visibleIndexes: function() {
 
         // The number of items per row
@@ -86,7 +90,7 @@ var Grid = React.createClass({
     },
 
     _itemsPerRow: function() {
-        return Math.floor(this._getGridRect().width / this._itemWidth());
+        return Math.floor(this._getWrapperRect().width / this._itemWidth());
     },
 
     _totalRows: function() {
@@ -112,14 +116,13 @@ var Grid = React.createClass({
 
     // The number of visible rows in the grid
     _numVisibleRows: function() {
-        return Math.ceil(window.innerHeight / this._itemHeight());
+        return Math.ceil(this._getWrapperRect().height / this._itemHeight());
     },
 
     // LIFECYCLE
 
     componentWillMount: function() {
         window.addEventListener('resize', this._resizeListener);
-        window.addEventListener('scroll', this._scrollListener);
     },
 
     componentDidMount: function() {
@@ -128,16 +131,15 @@ var Grid = React.createClass({
 
     componentWillUnmount: function() {
         window.removeEventListener('resize', this._resizeListener);
-        window.removeEventListener('scroll', this._scrollListener);
     },
 
     // LISTENERS
 
-    _scrollListener: function() {
+    _scrollListener: function(event) {
         this._visibleIndexes();
     },
 
-    _resizeListener: function() {
+    _resizeListener: function(event) {
         this._visibleIndexes();
     },
 
@@ -159,17 +161,12 @@ var Grid = React.createClass({
                             padding: this.props.itemPadding,
                             children: [entry({ key: "hello"+ i})],
                         }));
-                        // entries.push(
-                        //     <Item dimensions={this.state.itemDimensions} index={i} key={"item" + i}>
-                        //         <entry />
-                        //     </Item>
-                        // );
                     }
                 }
             }
         }
         return(
-            <div className="lazy-grid-wrapper">
+            <div ref="wrapper" onScroll={this._scrollListener} style={{ height: 400, overflowY: 'scroll' }}>
                 <div ref="grid" className="lazy-grid" style={this._style()}>
                     {entries}
                 </div>
