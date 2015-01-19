@@ -15,8 +15,6 @@ var Item = React.createClass({
 		return Math.floor(this.props.index / this.props.dimensions.itemsPerRow) * this.props.dimensions.height;
 	},
 
-	// EVENT HANDLERS
-
     render: function() {
 
     	var cx = React.addons.classSet({

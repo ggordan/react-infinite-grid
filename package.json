@@ -15,7 +15,7 @@
     "infinite"
   ],
   "license": "MIT",
-  "dependencies": {
+  "peerDependencies": {
     "react": "^0.12.0"
   }
 }

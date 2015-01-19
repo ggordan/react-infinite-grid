@@ -7,12 +7,13 @@ var Grid = React.createClass({
         entries: React.PropTypes.arrayOf(React.PropTypes.element).isRequired,
         height: React.PropTypes.number,
         width: React.PropTypes.number,
-        itemPadding: React.PropTypes.number,
+        padding: React.PropTypes.number,
+        wrapperHeight: React.PropTypes.number,
     },
 
     getDefaultProps: function() {
         return {
-            itemPadding: 10,
+            padding: 10,
             entries: [],
             height: 250,
             width: 250,
@@ -30,7 +31,7 @@ var Grid = React.createClass({
             itemDimensions: {
                 height: this._itemHeight(),
                 width: this._itemHeight(),
-                gridWidth: window.innerWidth,
+                gridWidth: 0,
                 itemsPerRow: 2,
             },
         };
@@ -38,11 +39,19 @@ var Grid = React.createClass({
 
     // METHODS
 
-    _style: function() {
+    _wrapperStyle: function() {
         return {
-            marginTop: this.props.itemPadding,
-            marginLeft: this.props.itemPadding,
+            maxHeight: window.innerHeight,
+            overflowY: 'scroll',
+            height: this.props.wrapperHeight,
+        };
+    },
+
+    _gridStyle: function() {
+        return {
             position: "relative",
+            marginTop: this.props.padding,
+            marginLeft: this.props.padding,
             minHeight: this.state.minHeight,
         };
     },
@@ -56,8 +65,6 @@ var Grid = React.createClass({
     },
 
     _visibleIndexes: function() {
-
-        // The number of items per row
         var itemsPerRow = this._itemsPerRow();
 
         // The number of rows that the user has scrolled past
@@ -71,7 +78,7 @@ var Grid = React.createClass({
 
         // the maximum should be the number of items scrolled past, plus some
         // buffer
-        var bufferRows = this._numVisibleRows() + 1;
+        var bufferRows = this._numVisibleRows() + 2;
         var max = scrolledPast + (itemsPerRow * bufferRows);
 
         this.setState({
@@ -99,7 +106,6 @@ var Grid = React.createClass({
         return scrolledPastHeight;
     },
 
-    // The number of rows that a user has scrolled past
     _scrolledPastRows: function() {
         var rect = this._getGridRect();
         var topScrollOffset = rect.height - rect.bottom;
@@ -107,11 +113,11 @@ var Grid = React.createClass({
     },
 
     _itemHeight: function() {
-        return this.props.height + (2 * this.props.itemPadding);
+        return this.props.height + (2 * this.props.padding);
     },
 
     _itemWidth: function() {
-        return this.props.width + (2 * this.props.itemPadding);
+        return this.props.width + (2 * this.props.padding);
     },
 
     // The number of visible rows in the grid
@@ -149,24 +155,22 @@ var Grid = React.createClass({
 
         var entries = [];
         if (this.props.entries.length > 0) {
-            for (var i = 0; i <= this.props.entries.length; i++) {
+            for (var i = this.state.visibleIndexes.lower; i <= this.state.visibleIndexes.higher; i++) {
                 var entry = this.props.entries[i];
-                if (i >= this.state.visibleIndexes.lower && i <= this.state.visibleIndexes.higher) {
-                    if (entry) {
-                        entries.push(React.createElement('Item', {
-                            dimensions: this.state.itemDimensions,
-                            index: i,
-                            key: "item-" + i,
-                            padding: this.props.itemPadding,
-                        }));
-                    }
+                if (entry) {
+                    entries.push(React.createElement(Item, {
+                        key: "item-" + i,
+                        index: i,
+                        padding: this.props.padding,
+                        dimensions: this.state.itemDimensions,
+                    }, entry));
                 }
             }
         }
 
         return(
-            <div ref="wrapper" className="infinite-grid-wrapper" onScroll={this._scrollListener} style={{ height: 400, overflowY: 'scroll' }}>
-                <div ref="grid" className="infinite-grid" style={this._style()}>
+            <div ref="wrapper" className="infinite-grid-wrapper" onScroll={this._scrollListener} style={this._wrapperStyle()}>
+                <div ref="grid" className="infinite-grid" style={this._gridStyle()}>
                     {entries}
                 </div>
             </div>
