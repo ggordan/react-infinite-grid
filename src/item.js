@@ -2,14 +2,6 @@ var React = require('react/addons');
 
 var Item = React.createClass({
 
-	getInitialState: function() {
-		return {
-			src: null,
-			visible: false,
-			selected: false,
-		};
-	},
-
 	_itemWidth: function() {
 		return this.props.dimensions.gridWidth / this.props.dimensions.itemsPerRow;
 	},
@@ -29,7 +21,6 @@ var Item = React.createClass({
 
     	var cx = React.addons.classSet({
     		item: true,
-    		selected: this.state.selected,
     	});
 
     	var style = {
@@ -38,11 +29,10 @@ var Item = React.createClass({
     		left: this._itemLeft(),
     		top: this._itemTop(),
     		position: "absolute",
-    		background: "#e2e2e2",
     	};
 
         return(
-            <div ref="item" className={cx} key={this.props.key} style={style}>
+            <div ref="item" className={cx} key={this.props.key+this.props.index} style={style}>
             	{this.props.children}
             </div>
         );

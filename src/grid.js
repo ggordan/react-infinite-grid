@@ -90,7 +90,7 @@ var Grid = React.createClass({
     },
 
     _itemsPerRow: function() {
-        return Math.floor(this._getWrapperRect().width / this._itemWidth());
+        return Math.floor(this._getGridRect().width / this._itemWidth());
     },
 
     _totalRows: function() {
@@ -148,26 +148,25 @@ var Grid = React.createClass({
     render: function() {
 
         var entries = [];
-        var arrEntries = this.props.entries;
-        if (arrEntries.length > 0) {
-            for (var i = 0; i <= arrEntries.length; i++) {
+        if (this.props.entries.length > 0) {
+            for (var i = 0; i <= this.props.entries.length; i++) {
                 var entry = this.props.entries[i];
                 if (i >= this.state.visibleIndexes.lower && i <= this.state.visibleIndexes.higher) {
                     if (entry) {
-                        entries.push(Item({
+                        entries.push(React.createElement('Item', {
                             dimensions: this.state.itemDimensions,
                             index: i,
                             key: "item-" + i,
                             padding: this.props.itemPadding,
-                            children: [entry({ key: "hello"+ i})],
                         }));
                     }
                 }
             }
         }
+
         return(
-            <div ref="wrapper" onScroll={this._scrollListener} style={{ height: 400, overflowY: 'scroll' }}>
-                <div ref="grid" className="lazy-grid" style={this._style()}>
+            <div ref="wrapper" className="infinite-grid-wrapper" onScroll={this._scrollListener} style={{ height: 400, overflowY: 'scroll' }}>
+                <div ref="grid" className="infinite-grid" style={this._style()}>
                     {entries}
                 </div>
             </div>

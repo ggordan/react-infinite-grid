@@ -1,20 +1,21 @@
 {
-	"name": "react-lazy-grid",
-	"version": "0.0.1",
-	"description": "An optimized React grid system which can handle rendering thousands of items.",
-	"author": "Gordan Grasarevic <me@ggordan.com>",
-	"scripts": {
-	},
-	"main": "src/grid.js",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/ggordan/react-lazy-grid"
-	},
-	"keywords": [
-		"react-component",
-		"react",
-		"grid",
-		"lazy"
-	],
-	"license": "MIT"
+  "name": "react-infinite-grid",
+  "version": "0.3.0",
+  "description": "An React grid component which can handle rendering large amounts of data.",
+  "author": "Gordan Grasarevic <me@ggordan.com>",
+  "main": "src/grid.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ggordan/react-infinite-grid"
+  },
+  "keywords": [
+    "react-component",
+    "react",
+    "grid",
+    "infinite"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "react": "^0.12.0"
+  }
 }
