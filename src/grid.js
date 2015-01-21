@@ -43,7 +43,9 @@ var Grid = React.createClass({
         return {
             maxHeight: window.innerHeight,
             overflowY: 'scroll',
+            width: '100%',
             height: this.props.wrapperHeight,
+            WebkitOverflowScrolling: 'touch',
         };
     },
 
@@ -78,7 +80,7 @@ var Grid = React.createClass({
 
         // the maximum should be the number of items scrolled past, plus some
         // buffer
-        var bufferRows = this._numVisibleRows() + 2;
+        var bufferRows = this._numVisibleRows() + 1;
         var max = scrolledPast + (itemsPerRow * bufferRows);
 
         this.setState({
@@ -146,6 +148,11 @@ var Grid = React.createClass({
     },
 
     _resizeListener: function(event) {
+        if (!this.props.wrapperHeight) {
+            this.setState({
+                wrapperHeight: window.innerHeight,
+            });
+        }
         this._visibleIndexes();
     },
 
