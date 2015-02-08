@@ -1,7 +1,7 @@
 var React = require('react');
 var Item = require('./item');
 
-var Grid = React.createClass({
+var InfiniteGrid = React.createClass({
 
     propTypes: {
         entries: React.PropTypes.arrayOf(React.PropTypes.element).isRequired,
@@ -185,4 +185,4 @@ var Grid = React.createClass({
     },
 });
 
-module.exports = Grid;
+module.exports = InfiniteGrid;
