@@ -36,4 +36,4 @@ React.render(<InfiniteGrid wrapperHeight={400} entries={items} />, document.getE
 
 # Demo
 
-You can find a demo here a demo [here](http://ggordan.com/post/react-infinite-grid.html).
+You can find a demo [here](http://ggordan.com/post/react-infinite-grid.html).
