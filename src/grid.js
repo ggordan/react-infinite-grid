@@ -137,6 +137,10 @@ var InfiniteGrid = React.createClass({
         this._visibleIndexes();
     },
 
+    shouldComponentUpdate: function(nextProps, nextState) {
+        return JSON.stringify(this.state) !== JSON.stringify(nextState);
+    },
+
     componentWillUnmount: function() {
         window.removeEventListener('resize', this._resizeListener);
     },
@@ -159,7 +163,6 @@ var InfiniteGrid = React.createClass({
     // RENDER
 
     render: function() {
-
         var entries = [];
         if (this.props.entries.length > 0) {
             for (var i = this.state.visibleIndexes.lower; i <= this.state.visibleIndexes.higher; i++) {
