@@ -34,6 +34,18 @@ for (var i = 0; i <= 100000; i++) {
 React.render(<InfiniteGrid wrapperHeight={400} entries={items} />, document.getElementById('grid'));
 ```
 
+## Required props
+
+- entries `React.PropTypes.arrayOf(React.PropTypes.element)` - The only required property is an array of React elements that you want to render.
+
+## Optional props
+
+- **height** `React.PropTypes.number` - The height of the grid item
+- **width** `React.PropTypes.number` - The width of the grid item
+- **padding** `React.PropTypes.number` - The padding around your items
+- **wrapperHeight** `React.PropTypes.number` - The height of the grid.
+- **lazyCallback** `React.PropTypes.func` - A function that takes no arguments which is called when a user reaches the end of the grid. Useful if you want to lazy load your data.
+
 # Demo
 
 You can find a demo [here](http://ggordan.com/post/react-infinite-grid.html).
