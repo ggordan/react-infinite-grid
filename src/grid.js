@@ -26,7 +26,7 @@ var InfiniteGrid = React.createClass({
 
     getInitialState: function() {
         return {
-            selectMode: false,
+            initiatedLazyload: false,
             minHeight: window.innerHeight * 2,
             minItemIndex: 0,
             maxItemIndex: 100,
@@ -135,8 +135,9 @@ var InfiniteGrid = React.createClass({
     },
 
     _lazyCallback: function() {
-        if ((this.state.maxItemIndex === this.props.entries.length) && this.props.lazyCallback) {
-            this.props.lazyCallback();
+        if (!this.state.initiatedLazyload && (this.state.maxItemIndex === this.props.entries.length) && this.props.lazyCallback) {
+            this.setState({initiatedLazyload: true });
+            this.props.lazyCallback(this.state.maxItemIndex);
         }
     },
 
@@ -149,6 +150,14 @@ var InfiniteGrid = React.createClass({
     componentDidMount: function() {
         this._updateItemDimensions();
         this._visibleIndexes();
+    },
+
+    componentWillReceiveProps: function(nextProps) {
+        if (nextProps.entries.length > this.props.entries.length) {
+            this.setState({
+                initiatedLazyload: false,
+            });
+        }
     },
 
     componentWillUnmount: function() {
