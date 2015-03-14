@@ -94,6 +94,18 @@ var InfiniteGrid = React.createClass({
         });
     },
 
+    _updateItemDimensions: function() {
+        this.setState({
+            itemDimensions: {
+                height: this._itemHeight(),
+                width: this._itemHeight(),
+                gridWidth: this._getGridRect().width,
+                itemsPerRow: this._itemsPerRow(),
+            },
+            minHeight: this._totalRows(),
+        });
+    },
+
     _itemsPerRow: function() {
         return Math.floor(this._getGridRect().width / this._itemWidth());
     },
@@ -135,15 +147,7 @@ var InfiniteGrid = React.createClass({
     },
 
     componentDidMount: function() {
-        this.setState({
-            itemDimensions: {
-                height: this._itemHeight(),
-                width: this._itemHeight(),
-                gridWidth: this._getGridRect().width,
-                itemsPerRow: this._itemsPerRow(),
-            },
-            minHeight: this._totalRows(),
-        });
+        this._updateItemDimensions();
         this._visibleIndexes();
     },
 
@@ -163,6 +167,7 @@ var InfiniteGrid = React.createClass({
                 wrapperHeight: window.innerHeight,
             });
         }
+        this._updateItemDimensions();
         this._visibleIndexes();
     },
 
