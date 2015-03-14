@@ -1,7 +1,10 @@
-var React = require('react');
+var React = require('react/addons');
+var PureRenderMixin = React.addons.PureRenderMixin;
 var Item = require('./item');
 
 var InfiniteGrid = React.createClass({
+
+    mixins: [ PureRenderMixin ],
 
     propTypes: {
         entries: React.PropTypes.arrayOf(React.PropTypes.element).isRequired,
@@ -24,10 +27,8 @@ var InfiniteGrid = React.createClass({
         return {
             selectMode: false,
             minHeight: window.innerHeight * 2,
-            visibleIndexes: {
-                lower: 0,
-                higher: 100,
-            },
+            minItemIndex: 0,
+            maxItemIndex: 100,
             itemDimensions: {
                 height: this._itemHeight(),
                 width: this._itemHeight(),
@@ -82,19 +83,11 @@ var InfiniteGrid = React.createClass({
         // buffer
         var bufferRows = this._numVisibleRows() + 1;
         var max = scrolledPast + (itemsPerRow * bufferRows);
+        if (max > this.props.entries.length) max = this.props.entries.length;
 
         this.setState({
-            visibleIndexes: {
-                lower: min,
-                higher: max,
-            },
-            itemDimensions: {
-                height: this._itemHeight(),
-                width: this._itemHeight(),
-                gridWidth: this._getGridRect().width,
-                itemsPerRow: itemsPerRow,
-            },
-            minHeight: this._totalRows(),
+            minItemIndex: min,
+            maxItemIndex: max,
         });
     },
 
@@ -122,7 +115,6 @@ var InfiniteGrid = React.createClass({
         return this.props.width + (2 * this.props.padding);
     },
 
-    // The number of visible rows in the grid
     _numVisibleRows: function() {
         return Math.ceil(this._getWrapperRect().height / this._itemHeight());
     },
@@ -134,11 +126,16 @@ var InfiniteGrid = React.createClass({
     },
 
     componentDidMount: function() {
+        this.setState({
+            itemDimensions: {
+                height: this._itemHeight(),
+                width: this._itemHeight(),
+                gridWidth: this._getGridRect().width,
+                itemsPerRow: this._itemsPerRow(),
+            },
+            minHeight: this._totalRows(),
+        });
         this._visibleIndexes();
-    },
-
-    shouldComponentUpdate: function(nextProps, nextState) {
-        return JSON.stringify(this.state) !== JSON.stringify(nextState);
     },
 
     componentWillUnmount: function() {
@@ -165,7 +162,7 @@ var InfiniteGrid = React.createClass({
     render: function() {
         var entries = [];
         if (this.props.entries.length > 0) {
-            for (var i = this.state.visibleIndexes.lower; i <= this.state.visibleIndexes.higher; i++) {
+            for (var i = this.state.minItemIndex; i <= this.state.maxItemIndex; i++) {
                 var entry = this.props.entries[i];
                 if (entry) {
                     entries.push(React.createElement(Item, {
