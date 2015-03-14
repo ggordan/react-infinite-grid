@@ -12,6 +12,7 @@ var InfiniteGrid = React.createClass({
         width: React.PropTypes.number,
         padding: React.PropTypes.number,
         wrapperHeight: React.PropTypes.number,
+        lazyCallback: React.PropTypes.func,
     },
 
     getDefaultProps: function() {
@@ -88,6 +89,8 @@ var InfiniteGrid = React.createClass({
         this.setState({
             minItemIndex: min,
             maxItemIndex: max,
+        }, function() {
+            this._lazyCallback();
         });
     },
 
@@ -117,6 +120,12 @@ var InfiniteGrid = React.createClass({
 
     _numVisibleRows: function() {
         return Math.ceil(this._getWrapperRect().height / this._itemHeight());
+    },
+
+    _lazyCallback: function() {
+        if ((this.state.maxItemIndex === this.props.entries.length) && this.props.lazyCallback) {
+            this.props.lazyCallback();
+        }
     },
 
     // LIFECYCLE
