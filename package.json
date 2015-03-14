@@ -1,6 +1,6 @@
 {
   "name": "react-infinite-grid",
-  "version": "0.3.7",
+  "version": "0.3.8",
   "description": "An React grid component which can handle rendering large amounts of data.",
   "author": "Gordan Grasarevic <me@ggordan.com>",
   "main": "src/grid.js",
@@ -17,5 +17,9 @@
   "license": "MIT",
   "peerDependencies": {
     "react": "^0.12.0"
+  },
+  "devDependencies": {
+    "jsx-loader": "^0.12.2",
+    "webpack": "^1.7.3"
   }
 }
