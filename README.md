@@ -36,7 +36,7 @@ React.render(<InfiniteGrid wrapperHeight={400} entries={items} />, document.getE
 
 ## Required props
 
-- entries `React.PropTypes.arrayOf(React.PropTypes.element)` - The only required property is an array of React elements that you want to render.
+- **entries** `React.PropTypes.arrayOf(React.PropTypes.element)` - The only required property is an array of React elements that you want to render.
 
 ## Optional props
 
