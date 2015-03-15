@@ -12,7 +12,7 @@ npm install react-infinite-grid
 
 The example below renders a grid with 100,000 items.
 
-```
+```jsx
 var React = require('react');
 var InfiniteGrid = require('react-infinite-grid');
 
