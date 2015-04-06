@@ -13,6 +13,7 @@ var InfiniteGrid = React.createClass({
         padding: React.PropTypes.number,
         wrapperHeight: React.PropTypes.number,
         lazyCallback: React.PropTypes.func,
+        renderRangeCallback: React.PropTypes.func,
     },
 
     getDefaultProps: function() {
@@ -157,6 +158,12 @@ var InfiniteGrid = React.createClass({
             this.setState({
                 initiatedLazyload: false,
             });
+        }
+    },
+
+    componentDidUpdate: function(prevProps, prevState) {
+        if (typeof this.props.renderRangeCallback === 'function') {
+            this.props.renderRangeCallback(this.state.minItemIndex, this.state.maxItemIndex);
         }
     },
 
