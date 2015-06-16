@@ -11,7 +11,7 @@ var InfiniteGrid = React.createClass({
 // TODO: test if this is a ReactClass
         },
         itemClassName: React.PropTypes.string,
-        entries: React.PropTypes.arrayOf(React.PropTypes.element).isRequired,
+        entries: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
         height: React.PropTypes.number,
         width: React.PropTypes.number,
         padding: React.PropTypes.number,
