@@ -19,11 +19,7 @@ var Item = React.createClass({
 	},
 
     render: function() {
-
-    	var cx = React.addons.classSet({
-    		item: true,
-    	});
-
+        
     	var style = {
     		width: this._itemWidth() - this.props.padding,
     		height: this.props.dimensions.height - this.props.padding,
@@ -32,7 +28,7 @@ var Item = React.createClass({
     		position: "absolute",
     	};
         var ItemRenderer = this.props.ItemRenderer;
-        
+
         return(
             <div ref="item" className={this.props.itemClassName} key={this.props.key+this.props.index} style={style}>
             	<ItemRenderer {...this.props.data}/>
