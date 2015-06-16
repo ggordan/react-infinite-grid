@@ -159,6 +159,9 @@ var InfiniteGrid = React.createClass({
                 initiatedLazyload: false,
             });
         }
+        // Update these all the time because entries may change on the fly.
+        this._updateItemDimensions();
+        this._visibleIndexes();
     },
 
     componentDidUpdate: function(prevProps, prevState) {
