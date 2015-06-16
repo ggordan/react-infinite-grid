@@ -1,7 +1,15 @@
-var React = require('react');
+var React = require('react/addons');
+var PureRenderMixin = React.addons.PureRenderMixin;
 var InfiniteGrid = require('../src/grid');
 
-var Example = React.createClass({
+var ExampleItemRenderer = React.createClass({
+
+    mixins: [ PureRenderMixin ],
+
+    propTypes: {
+        index: React.PropTypes.arrayOf(React.PropTypes.number)
+    },
+
     render: function() {
         return(
             <div className="example">
@@ -13,7 +21,9 @@ var Example = React.createClass({
 
 var items = [];
 for (var i = 0; i <= 100000; i++) {
-    items.push(<Example index={i} key={"example-" + i} />);
+    items.push({
+    	index: i
+    });
 }
 
-React.render(<InfiniteGrid entries={items} />, document.getElementById('grid'));
+React.render(<InfiniteGrid ItemRenderer={ExampleItemRenderer} itemClassName={"item"} entries={items} />, document.getElementById('grid'));

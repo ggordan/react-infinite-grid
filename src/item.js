@@ -1,6 +1,9 @@
 var React = require('react/addons');
+var PureRenderMixin = React.addons.PureRenderMixin;
 
 var Item = React.createClass({
+
+    mixins: [ PureRenderMixin ],
 
 	_itemWidth: function() {
 		return this.props.dimensions.gridWidth / this.props.dimensions.itemsPerRow;
@@ -28,10 +31,11 @@ var Item = React.createClass({
     		top: this._itemTop(),
     		position: "absolute",
     	};
-
+        var ItemRenderer = this.props.ItemRenderer;
+        
         return(
-            <div ref="item" className={cx} key={this.props.key+this.props.index} style={style}>
-            	{this.props.children}
+            <div ref="item" className={this.props.itemClassName} key={this.props.key+this.props.index} style={style}>
+            	<ItemRenderer {...this.props.data}/>
             </div>
         );
     },

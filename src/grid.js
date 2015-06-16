@@ -7,6 +7,10 @@ var InfiniteGrid = React.createClass({
     mixins: [ PureRenderMixin ],
 
     propTypes: {
+        ItemRenderer: function(props, propName, componentName) {
+// TODO: test if this is a ReactClass
+        },
+        itemClassName: React.PropTypes.string,
         entries: React.PropTypes.arrayOf(React.PropTypes.element).isRequired,
         height: React.PropTypes.number,
         width: React.PropTypes.number,
@@ -199,11 +203,14 @@ var InfiniteGrid = React.createClass({
                 var entry = this.props.entries[i];
                 if (entry) {
                     entries.push(React.createElement(Item, {
+                        ItemRenderer: this.props.ItemRenderer,
+                        itemClassName: this.props.itemClassName,
                         key: "item-" + i,
                         index: i,
                         padding: this.props.padding,
                         dimensions: this.state.itemDimensions,
-                    }, entry));
+                        data: entry
+                    }));
                 }
             }
         }
