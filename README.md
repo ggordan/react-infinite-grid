@@ -13,25 +13,35 @@ npm install react-infinite-grid
 The example below renders a grid with 100,000 items.
 
 ```jsx
-var React = require('react');
+var React = require('react/addons');
+var PureRenderMixin = React.addons.PureRenderMixin;
 var InfiniteGrid = require('react-infinite-grid');
 
-var Example = React.createClass({
-	render: function() {
-		return(
-			<div className="example">
-				This is {this.props.index}
-			</div>
-		);
-	},
+var ExampleItemRenderer = React.createClass({
+
+    mixins: [ PureRenderMixin ],
+
+    propTypes: {
+        index: React.PropTypes.arrayOf(React.PropTypes.number)
+    },
+
+    render: function() {
+        return(
+            <div className="example">
+                This is {this.props.index}
+            </div>
+        );
+    },
 });
 
 var items = [];
 for (var i = 0; i <= 100000; i++) {
-	items.push(<Example index={i} key={"example-" + i} />);
+    items.push({
+    	index: i
+    });
 }
 
-React.render(<InfiniteGrid wrapperHeight={400} entries={items} />, document.getElementById('grid'));
+React.render(<InfiniteGrid ItemRenderer={ExampleItemRenderer} entries={items} />, document.getElementById('grid'));
 ```
 
 ## Required props
