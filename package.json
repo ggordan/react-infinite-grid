@@ -15,11 +15,16 @@
     "infinite"
   ],
   "license": "MIT",
-  "peerDependencies": {
-    "react": "^0.12.0"
+  "dependencies": {
+    "react": "0.13.3",
+    "reactify": "1.1.1"
   },
   "devDependencies": {
     "jsx-loader": "^0.12.2",
     "webpack": "^1.7.3"
+  },
+  "scripts": {
+    "example-browserify": "browserify -t reactify example/example.js > example/bundle.js",
+    "example-watchify": "watchify -t reactify example/example.js -o example/bundle.js"
   }
 }
