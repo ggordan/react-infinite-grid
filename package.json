@@ -3,7 +3,7 @@
   "version": "0.3.9",
   "description": "An React grid component which can handle rendering large amounts of data.",
   "author": "Gordan Grasarevic <me@ggordan.com>",
-  "main": "src/grid.js",
+  "main": "lib/grid.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/ggordan/react-infinite-grid"
