@@ -219,7 +219,7 @@ var InfiniteGrid = React.createClass({
 			ref: "grid",
 			className: "infinite-grid",
 			style: this._gridStyle()
-		});
+		},entries);
 
 		return React.createElement("div",{
 			ref:"wrapper",
