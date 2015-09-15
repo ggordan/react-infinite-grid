@@ -214,14 +214,19 @@ var InfiniteGrid = React.createClass({
                 }
             }
         }
+	
+		var grid = React.createElement("div",{
+			ref: "grid",
+			className: "infinite-grid",
+			style: this._gridStyle()
+		});
 
-        return(
-            <div ref="wrapper" className="infinite-grid-wrapper" onScroll={this._scrollListener} style={this._wrapperStyle()}>
-                <div ref="grid" className="infinite-grid" style={this._gridStyle()}>
-                    {entries}
-                </div>
-            </div>
-        );
+		return React.createElement("div",{
+			ref:"wrapper",
+			className:"infinite-grid-wrapper",
+			onScroll: this._scrollListener,
+			style: this._wrapperStyle()
+		},grid);
     },
 });
 
