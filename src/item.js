@@ -3,7 +3,7 @@ var PureRenderMixin = React.addons.PureRenderMixin;
 
 var Item = React.createClass({
 
-    mixins: [ PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	_itemWidth: function() {
 		return this.props.dimensions.gridWidth / this.props.dimensions.itemsPerRow;
@@ -18,23 +18,25 @@ var Item = React.createClass({
 		return Math.floor(this.props.index / this.props.dimensions.itemsPerRow) * this.props.dimensions.height;
 	},
 
-    render: function() {
-        
-    	var style = {
-    		width: this._itemWidth() - this.props.padding,
-    		height: this.props.dimensions.height - this.props.padding,
-    		left: this._itemLeft(),
-    		top: this._itemTop(),
-    		position: "absolute",
-    	};
-        var ItemRenderer = this.props.ItemRenderer;
+	render: function() {
 
-        return(
-            <div ref="item" className={this.props.itemClassName} key={this.props.key+this.props.index} style={style}>
-            	<ItemRenderer {...this.props.data}/>
-            </div>
-        );
-    },
+		var _style = {
+			width: this._itemWidth() - this.props.padding,
+			height: this.props.dimensions.height - this.props.padding,
+			left: this._itemLeft(),
+			top: this._itemTop(),
+			position: "absolute"
+		};
+
+		var ItemRenderer = this.props.ItemRenderer || "div";
+
+		var props = {
+			className: this.props.itemClassName,
+			style: _style
+		};
+
+		return React.createElement("div",props,React.createElement(ItemRenderer,this.props.data));
+	}
 });
 
 module.exports = Item;
