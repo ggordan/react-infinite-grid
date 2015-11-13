@@ -1,234 +1,252 @@
-var React = require('react/addons');
-var PureRenderMixin = React.addons.PureRenderMixin;
-var Item = require('./item');
+import React from 'react';
+import Item from './item';
 
-var InfiniteGrid = React.createClass({
+export default class InfiniteGrid extends React.Component {
 
-		mixins: [ PureRenderMixin ],
+	static get propTypes() {
+		return {
+			itemClassName: React.PropTypes.string,
+			entries: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+			height: React.PropTypes.number,
+			width: React.PropTypes.number,
+			padding: React.PropTypes.number,
+			wrapperHeight: React.PropTypes.number,
+			lazyCallback: React.PropTypes.func,
+			renderRangeCallback: React.PropTypes.func,
+			buffer: React.PropTypes.number
+		}
+	}
 
-		propTypes: {
-				ItemRenderer: function(props, propName, componentName) {
-// TODO: test if this is a ReactClass
-				},
-				itemClassName: React.PropTypes.string,
-				entries: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
-				height: React.PropTypes.number,
-				width: React.PropTypes.number,
-				padding: React.PropTypes.number,
-				wrapperHeight: React.PropTypes.number,
-				lazyCallback: React.PropTypes.func,
-				renderRangeCallback: React.PropTypes.func,
-				buffer: React.PropTypes.number
-		},
+	get defaultProps() {
+		return {
+				padding: 10,
+				entries: [],
+				height: 250,
+				width: 250,
+		};
+	}
 
-		getDefaultProps: function() {
-				return {
-						padding: 10,
-						entries: [],
-						height: 250,
-						width: 250,
-				};
-		},
+	get initialState() {
+		return {
+			initiatedLazyload: false,
+			minHeight: window.innerHeight * 2,
+			minItemIndex: 0,
+			maxItemIndex: 100,
+			itemDimensions: {
+				height: this._itemHeight(),
+				width: this._itemHeight(),
+				gridWidth: 0,
+				itemsPerRow: 2,
+			},
+		};
+	}
 
-		getInitialState: function() {
-				return {
-						initiatedLazyload: false,
-						minHeight: window.innerHeight * 2,
-						minItemIndex: 0,
-						maxItemIndex: 100,
-						itemDimensions: {
-								height: this._itemHeight(),
-								width: this._itemHeight(),
-								gridWidth: 0,
-								itemsPerRow: 2,
-						},
-				};
-		},
+	constructor(props) {
+		super(props);
+		this.props = this.defaultProps;
+		this.state = this.initialState;
+		// bind the functions
+		this._lazyCallback = this._lazyCallback.bind(this);
+		this._scrollListener = this._scrollListener.bind(this);
+		this._updateItemDimensions = this._updateItemDimensions.bind(this);
+		this._resizeListener = this._resizeListener.bind(this);
+		this._visibleIndexes = this._visibleIndexes.bind(this);
+		this._getGridRect = this._getGridRect.bind(this);
+		this._getWrapperRect = this._getWrapperRect.bind(this);
+		this._gridStyle = this._gridStyle.bind(this);
+		this._itemsPerRow = this._itemsPerRow.bind(this);
+		this._totalRows = this._totalRows.bind(this);
+		this._scrolledPastRows = this._scrolledPastRows.bind(this);
+		this._itemHeight = this._itemHeight.bind(this);
+		this._itemWidth = this._itemWidth.bind(this);
+		this._numVisibleRows = this._numVisibleRows.bind(this);
+	}
 
 		// METHODS
 
-		_wrapperStyle: function() {
-				return {
-						maxHeight: (window.innerHeight * 2),
-						overflowY: 'scroll',
-						width: '100%',
-						height: this.props.wrapperHeight,
-						WebkitOverflowScrolling: 'touch',
-				};
-		},
+	_wrapperStyle() {
+		return {
+			maxHeight: (window.innerHeight * 2),
+			overflowY: 'scroll',
+			width: '100%',
+			height: this.props.wrapperHeight,
+			WebkitOverflowScrolling: 'touch',
+		};
+	}
 
-		_gridStyle: function() {
-				return {
-						position: "relative",
-						marginTop: this.props.padding,
-						marginLeft: this.props.padding,
-						minHeight: this.state.minHeight,
-				};
-		},
+	_gridStyle() {
+		return {
+			position: "relative",
+			marginTop: this.props.padding,
+			marginLeft: this.props.padding,
+			minHeight: (window.innerHeight * 2),
+		};
+	}
 
-		_getGridRect: function() {
-				return this.refs.grid.getDOMNode().getBoundingClientRect();
-		},
+	_getGridRect() {
+		return this.refs.grid.getBoundingClientRect();
+	}
 
-		_getWrapperRect: function() {
-				return this.refs.wrapper.getDOMNode().getBoundingClientRect();
-		},
+	_getWrapperRect() {
+		return this.refs.wrapper.getBoundingClientRect();
+	}
 
-		_visibleIndexes: function() {
-				var itemsPerRow = this._itemsPerRow();
+	_visibleIndexes() {
+		var itemsPerRow = this._itemsPerRow();
 
-				// The number of rows that the user has scrolled past
-				var scrolledPast = (this._scrolledPastRows() * itemsPerRow);
-				if (scrolledPast < 0) scrolledPast = 0;
+		// The number of rows that the user has scrolled past
+		var scrolledPast = (this._scrolledPastRows() * itemsPerRow);
+		if (scrolledPast < 0) scrolledPast = 0;
 
-				// If i have scrolled past 20 items, but 60 are visible on screen,
-				// we do not want to change the minimum
-				var min = scrolledPast - itemsPerRow;
-				if (min < 0) min = 0;
+		// If i have scrolled past 20 items, but 60 are visible on screen,
+		// we do not want to change the minimum
+		var min = scrolledPast - itemsPerRow;
+		if (min < 0) min = 0;
 
-				// the maximum should be the number of items scrolled past, plus some
-				// buffer
-				var bufferRows = this._numVisibleRows() + this.props.buffer;
-				var max = scrolledPast + (itemsPerRow * bufferRows);
-				if (max > this.props.entries.length) max = this.props.entries.length;
+		// the maximum should be the number of items scrolled past, plus some
+		// buffer
+		var bufferRows = this._numVisibleRows() + this.props.buffer;
+		var max = scrolledPast + (itemsPerRow * bufferRows);
+		if (max > this.props.entries.length) max = this.props.entries.length;
 
-				this.setState({
-						minItemIndex: min,
-						maxItemIndex: max,
-				}, function() {
-						this._lazyCallback();
-				});
-		},
+		this.setState({
+			minItemIndex: min,
+			maxItemIndex: max,
+		}, function() {
+			this._lazyCallback();
+		});
+	}
 
-		_updateItemDimensions: function() {
-				this.setState({
-						itemDimensions: {
-								height: this._itemHeight(),
-								width: this._itemHeight(),
-								gridWidth: this._getGridRect().width,
-								itemsPerRow: this._itemsPerRow(),
-						},
-						minHeight: this._totalRows(),
-				});
-		},
+	_updateItemDimensions() {
+		this.setState({
+			itemDimensions: {
+				height: this._itemHeight(),
+				width: this._itemHeight(),
+				gridWidth: this._getGridRect() || 200,
+				itemsPerRow: this._itemsPerRow(),
+			},
+			minHeight: this._totalRows(),
+		});
+	}
 
-		_itemsPerRow: function() {
-				return Math.floor(this._getGridRect().width / this._itemWidth());
-		},
+	_itemsPerRow() {
+		return Math.floor(this._getGridRect().width / this._itemWidth());
+	}
 
-		_totalRows: function() {
-				var scrolledPastHeight = (this.props.entries.length / this._itemsPerRow()) * this._itemHeight();
-				if (scrolledPastHeight < 0) return 0;
-				return scrolledPastHeight;
-		},
+	_totalRows() {
+		const scrolledPastHeight = (this.props.entries.length / this._itemsPerRow()) * this._itemHeight();
+		if (scrolledPastHeight < 0) return 0;
+		return scrolledPastHeight;
+	}
 
-		_scrolledPastRows: function() {
-				var rect = this._getGridRect();
-				var topScrollOffset = rect.height - rect.bottom;
-				return Math.floor(topScrollOffset / this._itemHeight());
-		},
+	_scrolledPastRows() {
+		const rect = this._getGridRect();
+		const topScrollOffset = rect.height - rect.bottom;
+		return Math.floor(topScrollOffset / this._itemHeight());
+	}
 
-		_itemHeight: function() {
-				return this.props.height + (2 * this.props.padding);
-		},
+	_itemHeight() {
+		return this.props.height + (2 * this.props.padding);
+	}
 
-		_itemWidth: function() {
-				return this.props.width + (2 * this.props.padding);
-		},
+	_itemWidth() {
+		return this.props.width + (2 * this.props.padding);
+	}
 
-		_numVisibleRows: function() {
-				return Math.ceil(this._getWrapperRect().height / this._itemHeight());
-		},
+	_numVisibleRows() {
+		return Math.ceil(this._getWrapperRect().height / this._itemHeight());
+	}
 
-		_lazyCallback: function() {
-				if (!this.state.initiatedLazyload && (this.state.maxItemIndex === this.props.entries.length) && this.props.lazyCallback) {
-						this.setState({initiatedLazyload: true });
-						this.props.lazyCallback(this.state.maxItemIndex);
-				}
-		},
+	_lazyCallback() {
+		if (!this.state.initiatedLazyload && (this.state.maxItemIndex === this.props.entries.length) && this.props.lazyCallback) {
+			this.setState({initiatedLazyload: true });
+			this.props.lazyCallback(this.state.maxItemIndex);
+		}
+	}
 
-		// LIFECYCLE
+	// LIFECYCLE
 
-		componentWillMount: function() {
-				window.addEventListener('resize', this._resizeListener);
-		},
+	componentWillMount() {
+		window.addEventListener('resize', this._resizeListener);
+	}
 
-		componentDidMount: function() {
-				this._updateItemDimensions();
-				this._visibleIndexes();
-		},
+	componentDidMount() {
+		this._updateItemDimensions();
+		this._visibleIndexes();
+	}
 
-		componentWillReceiveProps: function(nextProps) {
-				if (nextProps.entries.length > this.props.entries.length) {
-						this.setState({
-								initiatedLazyload: false,
-						});
-				}
-				// Update these all the time because entries may change on the fly.
-				this._updateItemDimensions();
-				this._visibleIndexes();
-		},
+	componentWillReceiveProps(nextProps) {
+		if (nextProps.entries.length > this.props.entries.length) {
+			this.setState({
+				initiatedLazyload: false,
+			});
+		}
+		// Update these all the time because entries may change on the fly.
+		this._updateItemDimensions();
+		this._visibleIndexes();
+	}
 
-		componentDidUpdate: function(prevProps, prevState) {
-				if (typeof this.props.renderRangeCallback === 'function') {
-						this.props.renderRangeCallback(this.state.minItemIndex, this.state.maxItemIndex);
-				}
-		},
+	componentDidUpdate(prevProps, prevState) {
+		if (typeof this.props.renderRangeCallback === 'function') {
+			this.props.renderRangeCallback(this.state.minItemIndex, this.state.maxItemIndex);
+		}
+	}
 
-		componentWillUnmount: function() {
-				window.removeEventListener('resize', this._resizeListener);
-		},
+	componentWillUnmount() {
+		window.removeEventListener('resize', this._resizeListener);
+	}
 
-		// LISTENERS
+	// LISTENERS
 
-		_scrollListener: function(event) {
-				this._visibleIndexes();
-		},
+	_scrollListener(event) {
+			this._visibleIndexes();
+	}
 
-		_resizeListener: function(event) {
-				if (!this.props.wrapperHeight) {
-						this.setState({
-								wrapperHeight: window.innerHeight,
-						});
-				}
-				this._updateItemDimensions();
-				this._visibleIndexes();
-		},
+	_resizeListener(event) {
+			if (!this.props.wrapperHeight) {
+					this.setState({
+							wrapperHeight: window.innerHeight,
+					});
+			}
+			this._updateItemDimensions();
+			this._visibleIndexes();
+	}
 
-		// RENDER
+	// RENDER
 
-		render: function() {
-				var entries = [];
-				if (this.props.entries.length > 0) {
-						for (var i = this.state.minItemIndex; i <= this.state.maxItemIndex; i++) {
-								var entry = this.props.entries[i];
-								if (entry) {
-										entries.push(React.createElement(Item, {
-												ItemRenderer: this.props.ItemRenderer,
-												itemClassName: this.props.itemClassName,
-												key: "item-" + i,
-												index: i,
-												padding: this.props.padding,
-												dimensions: this.state.itemDimensions,
-												data: entry
-										}));
-								}
-						}
-				}
+	render() {
+		var entries = [];
 
-		var grid = React.createElement("div",{
-			ref: "grid",
-			className: "infinite-grid",
-			style: this._gridStyle()
-		},entries);
+		// if no entries exist, there's nothing left to do
+		if (!this.props.entries.length) {
+			return null;
+		}
 
-		return React.createElement("div",{
-			ref:"wrapper",
-			className:"infinite-grid-wrapper",
-			onScroll: this._scrollListener,
-			style: this._wrapperStyle()
-		},grid);
-		},
-});
+		for (let i = this.state.minItemIndex; i <= this.state.maxItemIndex; i++) {
+			let entry = this.props.entries[i];
+			if (!entry) {
+				continue;
+			}
+			const itemProps = {
+				itemClassName: this.props.itemClassName,
+				key: 'item-' + i,
+				index: i,
+				padding: this.props.padding,
+				dimensions: this.state.itemDimensions,
+				data: entry
+			};
+			entries.push(<Item {...itemProps} />);
+		}
+		return (
+			<div className='infinite-grid-wrapper' ref='wrapper' onScroll={this._scrollListener} style={this._wrapperStyle()}>
+				<div ref='grid' className='infinite-grid' style={this._gridStyle()}>
+					{entries}
+				</div>
+			</div>
+		);
+
+	}
+
+};
 
 module.exports = InfiniteGrid;

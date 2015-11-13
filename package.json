@@ -3,7 +3,7 @@
   "version": "0.3.9",
   "description": "An React grid component which can handle rendering large amounts of data.",
   "author": "Gordan Grasarevic <me@ggordan.com>",
-  "main": "src/grid.js",
+  "main": "dist/grid.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/ggordan/react-infinite-grid"
@@ -16,15 +16,19 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "react": "0.13.3",
-    "reactify": "1.1.1"
+    "react": "^0.14.0",
+    "react-dom": "^0.14.2"
   },
   "devDependencies": {
-    "jsx-loader": "^0.12.2",
+    "babel": "^6.1.18",
+    "babel-core": "^6.1.20",
+    "babel-eslint": "^4.1.3",
+    "babel-loader": "^6.1.0",
+    "babel-preset-es2015": "^6.1.18",
+    "babel-preset-react": "^6.1.18",
     "webpack": "^1.7.3"
   },
   "scripts": {
-    "example-browserify": "browserify -t reactify example/example.js > example/bundle.js",
-    "example-watchify": "watchify -t reactify example/example.js -o example/bundle.js"
+    "postinstall": "rimraf dist && babel ./src -d dist --presets=react,es2015"
   }
 }

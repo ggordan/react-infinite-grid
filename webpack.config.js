@@ -2,14 +2,15 @@ var webpack = require('webpack');
 var path = require('path');
 
 module.exports = {
-    entry: "./example/example.js",
+    entry: "./example/main.js",
     output: {
-        path: path.join(__dirname, 'example'),
-        filename: "bundle.js"
+        path: './example',
+        filename: "example.bundle.js"
     },
     module: {
-        loaders: [
-            { test: /\.js$/, loader: "jsx-loader" }
-        ]
+        loaders: [{
+            test: /\.jsx?$/,
+            loaders: ['babel?presets[]=es2015,presets[]=react']
+        }]
     }
 };
