@@ -22,8 +22,8 @@ class ExampleItem extends React.Component {
 
 // Create 100,000 Example items
 let items = [];
-for (let i = 0; i <= 100000; i++) {
+for (let i = 0; i <= 1000; i++) {
   items.push(<ExampleItem index={i} />);
 }
 
-ReactDOM.render(<InfiniteGrid itemClassName={"item"} entries={items} />, document.getElementById('grid'));
+ReactDOM.render(<InfiniteGrid entries={items} wrapperHeight={400} />, document.getElementById('grid'));

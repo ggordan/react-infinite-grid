@@ -4,8 +4,10 @@ export default class Item extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.props = {};
 		this.state = {};
+		this._itemWidth = this._itemWidth.bind(this);
+		this._itemLeft = this._itemLeft.bind(this);
+		this._itemTop = this._itemTop.bind(this);
 	}
 
 	_itemWidth() {
@@ -28,11 +30,11 @@ export default class Item extends React.Component {
 			height: this.props.dimensions.height - this.props.padding,
 			left: this._itemLeft(),
 			top: this._itemTop(),
-			position: "absolute"
+			position: 'absolute'
 		};
 
 		var props = {
-			className: this.props.itemClassName,
+			className: 'item',
 			style: _style
 		};
 

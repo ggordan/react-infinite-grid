@@ -17,16 +17,7 @@ export default class InfiniteGrid extends React.Component {
 		}
 	}
 
-	get defaultProps() {
-		return {
-				padding: 10,
-				entries: [],
-				height: 250,
-				width: 250,
-		};
-	}
-
-	get initialState() {
+	initialState() {
 		return {
 			initiatedLazyload: false,
 			minHeight: window.innerHeight * 2,
@@ -43,8 +34,7 @@ export default class InfiniteGrid extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.props = this.defaultProps;
-		this.state = this.initialState;
+		this.state = this.initialState();
 		// bind the functions
 		this._lazyCallback = this._lazyCallback.bind(this);
 		this._scrollListener = this._scrollListener.bind(this);
@@ -76,7 +66,7 @@ export default class InfiniteGrid extends React.Component {
 
 	_gridStyle() {
 		return {
-			position: "relative",
+			position: 'relative',
 			marginTop: this.props.padding,
 			marginLeft: this.props.padding,
 			minHeight: (window.innerHeight * 2),
@@ -84,6 +74,7 @@ export default class InfiniteGrid extends React.Component {
 	}
 
 	_getGridRect() {
+		// debugger;
 		return this.refs.grid.getBoundingClientRect();
 	}
 
@@ -122,7 +113,7 @@ export default class InfiniteGrid extends React.Component {
 			itemDimensions: {
 				height: this._itemHeight(),
 				width: this._itemHeight(),
-				gridWidth: this._getGridRect() || 200,
+				gridWidth: this._getGridRect().width,
 				itemsPerRow: this._itemsPerRow(),
 			},
 			minHeight: this._totalRows(),
@@ -249,4 +240,10 @@ export default class InfiniteGrid extends React.Component {
 
 };
 
-module.exports = InfiniteGrid;
+InfiniteGrid.defaultProps = {
+	buffer: 3,
+	padding: 10,
+	entries: [],
+	height: 250,
+	width: 250
+}
