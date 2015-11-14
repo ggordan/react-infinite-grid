@@ -241,7 +241,7 @@ export default class InfiniteGrid extends React.Component {
 };
 
 InfiniteGrid.defaultProps = {
-	buffer: 3,
+	buffer: 10,
 	padding: 10,
 	entries: [],
 	height: 250,

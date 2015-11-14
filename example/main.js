@@ -26,4 +26,4 @@ for (let i = 0; i <= 1000; i++) {
   items.push(<ExampleItem index={i} />);
 }
 
-ReactDOM.render(<InfiniteGrid entries={items} wrapperHeight={400} />, document.getElementById('grid'));
+ReactDOM.render(<InfiniteGrid entries={items} />, document.getElementById('grid'));
