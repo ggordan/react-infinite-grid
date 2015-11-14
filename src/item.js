@@ -1,13 +1,10 @@
 import React from 'react';
+import {isEqual} from 'lodash';
 
 export default class Item extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.state = {};
-		this._itemWidth = this._itemWidth.bind(this);
-		this._itemLeft = this._itemLeft.bind(this);
-		this._itemTop = this._itemTop.bind(this);
 	}
 
 	_itemWidth() {
@@ -23,8 +20,15 @@ export default class Item extends React.Component {
 		return Math.floor(this.props.index / this.props.dimensions.itemsPerRow) * this.props.dimensions.height;
 	}
 
-	render() {
+	// LIFECYCLE
 
+	shouldComponentUpdate(nextProps, nextState) {
+		return !isEqual(this.props, nextProps);
+	}
+
+	// RENDER
+
+	render() {
 		const _style = {
 			width: this._itemWidth() - this.props.padding,
 			height: this.props.dimensions.height - this.props.padding,

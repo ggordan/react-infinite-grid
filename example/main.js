@@ -26,4 +26,8 @@ for (let i = 0; i <= 1000; i++) {
   items.push(<ExampleItem index={i} />);
 }
 
-ReactDOM.render(<InfiniteGrid entries={items} />, document.getElementById('grid'));
+const lazyCallback = (index) => {
+  console.log(index);
+}
+
+ReactDOM.render(<InfiniteGrid entries={items} wrapperHeight={400} lazyCallback={lazyCallback} />, document.getElementById('grid'));

@@ -1,4 +1,5 @@
 import React from 'react';
+import {isEqual} from 'lodash';
 import Item from './item';
 
 export default class InfiniteGrid extends React.Component {
@@ -36,31 +37,21 @@ export default class InfiniteGrid extends React.Component {
 		super(props);
 		this.state = this.initialState();
 		// bind the functions
-		this._lazyCallback = this._lazyCallback.bind(this);
 		this._scrollListener = this._scrollListener.bind(this);
 		this._updateItemDimensions = this._updateItemDimensions.bind(this);
 		this._resizeListener = this._resizeListener.bind(this);
 		this._visibleIndexes = this._visibleIndexes.bind(this);
-		this._getGridRect = this._getGridRect.bind(this);
-		this._getWrapperRect = this._getWrapperRect.bind(this);
-		this._gridStyle = this._gridStyle.bind(this);
-		this._itemsPerRow = this._itemsPerRow.bind(this);
-		this._totalRows = this._totalRows.bind(this);
-		this._scrolledPastRows = this._scrolledPastRows.bind(this);
-		this._itemHeight = this._itemHeight.bind(this);
-		this._itemWidth = this._itemWidth.bind(this);
-		this._numVisibleRows = this._numVisibleRows.bind(this);
 	}
 
 		// METHODS
 
 	_wrapperStyle() {
 		return {
-			maxHeight: (window.innerHeight * 2),
+			maxHeight: this._getGridHeight(),
 			overflowY: 'scroll',
 			width: '100%',
 			height: this.props.wrapperHeight,
-			WebkitOverflowScrolling: 'touch',
+			WebkitOverflowScrolling: true,
 		};
 	}
 
@@ -69,13 +60,16 @@ export default class InfiniteGrid extends React.Component {
 			position: 'relative',
 			marginTop: this.props.padding,
 			marginLeft: this.props.padding,
-			minHeight: (window.innerHeight * 2),
+			minHeight: this._getGridHeight(),
 		};
 	}
 
 	_getGridRect() {
-		// debugger;
 		return this.refs.grid.getBoundingClientRect();
+	}
+
+	_getGridHeight() {
+		return Math.floor(this.props.entries.length / this.state.itemDimensions.itemsPerRow) * this.state.itemDimensions.height;
 	}
 
 	_getWrapperRect() {
@@ -173,7 +167,7 @@ export default class InfiniteGrid extends React.Component {
 			});
 		}
 		// Update these all the time because entries may change on the fly.
-		this._updateItemDimensions();
+		// this._updateItemDimensions();
 		this._visibleIndexes();
 	}
 
@@ -183,6 +177,10 @@ export default class InfiniteGrid extends React.Component {
 		}
 	}
 
+	shouldComponentUpdate(nextProps, nextState) {
+		return !isEqual(this.state, nextState);
+	}
+
 	componentWillUnmount() {
 		window.removeEventListener('resize', this._resizeListener);
 	}
@@ -190,7 +188,10 @@ export default class InfiniteGrid extends React.Component {
 	// LISTENERS
 
 	_scrollListener(event) {
+		clearTimeout(this.scrollOffset);
+		this.scrollOffset = setTimeout(() => {
 			this._visibleIndexes();
+		}, 10);
 	}
 
 	_resizeListener(event) {
@@ -219,7 +220,6 @@ export default class InfiniteGrid extends React.Component {
 				continue;
 			}
 			const itemProps = {
-				itemClassName: this.props.itemClassName,
 				key: 'item-' + i,
 				index: i,
 				padding: this.props.padding,
