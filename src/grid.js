@@ -69,7 +69,9 @@ export default class InfiniteGrid extends React.Component {
 	}
 
 	_getGridHeight() {
-		return Math.floor(this.props.entries.length / this.state.itemDimensions.itemsPerRow) * this.state.itemDimensions.height;
+		return (this.props.entries.length < this.state.itemDimensions.itemsPerRow) ?
+			this.state.itemDimensions.height :
+			Math.floor(this.props.entries.length / this.state.itemDimensions.itemsPerRow) * this.state.itemDimensions.height;
 	}
 
 	_getWrapperRect() {
