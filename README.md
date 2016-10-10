@@ -15,7 +15,7 @@ The example below renders a grid with 100,000 items.
 ```jsx
 import React from 'react';
 import ReactDOM from 'react-dom';
-import InfiniteGrid from '../src/grid';
+import InfiniteGrid from 'react-infinite-grid';
 
 class ExampleItem extends React.Component {
 
