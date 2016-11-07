@@ -1,6 +1,6 @@
 import React from 'react';
 import {isEqual} from 'lodash';
-import Item from './GridItem';
+import Item from './Item';
 
 export default class InfiniteGrid extends React.Component {
 	static get propTypes() {
