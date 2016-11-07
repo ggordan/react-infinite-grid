@@ -3,7 +3,6 @@ import {isEqual} from 'lodash';
 import Item from './item';
 
 export default class InfiniteGrid extends React.Component {
-
 	static get propTypes() {
 		return {
 			itemClassName: React.PropTypes.string,
@@ -43,7 +42,7 @@ export default class InfiniteGrid extends React.Component {
 		this._visibleIndexes = this._visibleIndexes.bind(this);
 	}
 
-		// METHODS
+	// METHODS
 
 	_wrapperStyle() {
 		return {
@@ -65,17 +64,17 @@ export default class InfiniteGrid extends React.Component {
 	}
 
 	_getGridRect() {
-		return this.refs.grid.getBoundingClientRect();
+		return this.refs.grid ? this.refs.grid.getBoundingClientRect() : true;
 	}
 
 	_getGridHeight() {
 		return (this.props.entries.length < this.state.itemDimensions.itemsPerRow) ?
 			this.state.itemDimensions.height :
-			Math.floor(this.props.entries.length / this.state.itemDimensions.itemsPerRow) * this.state.itemDimensions.height;
+		Math.floor(this.props.entries.length / this.state.itemDimensions.itemsPerRow) * this.state.itemDimensions.height;
 	}
 
 	_getWrapperRect() {
-		return this.refs.wrapper.getBoundingClientRect();
+		return this.refs.wrapper ? this.refs.wrapper.getBoundingClientRect() : true;
 	}
 
 	_visibleIndexes() {
@@ -97,8 +96,8 @@ export default class InfiniteGrid extends React.Component {
 		if (max > this.props.entries.length) max = this.props.entries.length;
 
 		this.setState({
-			minItemIndex: min,
-			maxItemIndex: max,
+			minItemIndex: min ? min : 0,
+			maxItemIndex: max ? max : 100,
 		}, function() {
 			this._lazyCallback();
 		});
@@ -180,7 +179,8 @@ export default class InfiniteGrid extends React.Component {
 	}
 
 	shouldComponentUpdate(nextProps, nextState) {
-		return !isEqual(this.state, nextState);
+		return !isEqual(this.state, nextState)
+			|| !isEqual(this.state, nextProps);
 	}
 
 	componentWillUnmount() {
@@ -197,13 +197,13 @@ export default class InfiniteGrid extends React.Component {
 	}
 
 	_resizeListener(event) {
-			if (!this.props.wrapperHeight) {
-					this.setState({
-							wrapperHeight: window.innerHeight,
-					});
-			}
-			this._updateItemDimensions();
-			this._visibleIndexes();
+		if (!this.props.wrapperHeight) {
+			this.setState({
+				wrapperHeight: window.innerHeight,
+			});
+		}
+		this._updateItemDimensions();
+		this._visibleIndexes();
 	}
 
 	// RENDER
@@ -215,7 +215,6 @@ export default class InfiniteGrid extends React.Component {
 		if (!this.props.entries.length) {
 			return null;
 		}
-
 		for (let i = this.state.minItemIndex; i <= this.state.maxItemIndex; i++) {
 			let entry = this.props.entries[i];
 			if (!entry) {
@@ -248,4 +247,4 @@ InfiniteGrid.defaultProps = {
 	entries: [],
 	height: 250,
 	width: 250
-}
+};
