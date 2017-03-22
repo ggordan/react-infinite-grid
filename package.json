@@ -18,8 +18,7 @@
   "dependencies": {
     "lodash": "^3.10.1",
     "react": "^15.3.0",
-    "react-dom": "^15.3.0",
-    "react-infinite-grid": "git+https://github.com/caseymonc/react-infinite-grid.git"
+    "react-dom": "^15.3.0"
   },
   "devDependencies": {
     "babel": "^6.1.18",
