@@ -17,8 +17,9 @@
   "license": "MIT",
   "dependencies": {
     "lodash": "^3.10.1",
-    "react": "^0.14.2",
-    "react-dom": "^0.14.2"
+    "react": "^15.3.0",
+    "react-dom": "^15.3.0",
+    "react-infinite-grid": "git+https://github.com/caseymonc/react-infinite-grid.git"
   },
   "devDependencies": {
     "babel": "^6.1.18",
