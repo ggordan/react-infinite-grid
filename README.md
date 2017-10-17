@@ -15,13 +15,14 @@ The example below renders a grid with 100,000 items.
 ```jsx
 import React from 'react';
 import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
 import InfiniteGrid from '../src/grid';
 
 class ExampleItem extends React.Component {
 
   static get propTypes() {
     return {
-      index: React.PropTypes.number
+      index: PropTypes.number
     };
   }
 
@@ -46,15 +47,15 @@ ReactDOM.render(<InfiniteGrid itemClassName={"item"} entries={items} />, documen
 
 ## Required props
 
-- **entries** `React.PropTypes.arrayOf(React.PropTypes.element)` - The only required property is an array of React elements that you want to render.
+- **entries** `PropTypes.arrayOf(PropTypes.element)` - The only required property is an array of React elements that you want to render.
 
 ## Optional props
 
-- **height** `React.PropTypes.number` - The height of the grid item
-- **width** `React.PropTypes.number` - The width of the grid item
-- **padding** `React.PropTypes.number` - The padding around your items
-- **wrapperHeight** `React.PropTypes.number` - The height of the grid.
-- **lazyCallback** `React.PropTypes.func` - A function that takes no arguments which is called when a user reaches the end of the grid. Useful if you want to lazy load your data.
+- **height** `PropTypes.number` - The height of the grid item
+- **width** `PropTypes.number` - The width of the grid item
+- **padding** `PropTypes.number` - The padding around your items
+- **wrapperHeight** `PropTypes.number` - The height of the grid.
+- **lazyCallback** `PropTypes.func` - A function that takes no arguments which is called when a user reaches the end of the grid. Useful if you want to lazy load your data.
 
 # Demo
 
